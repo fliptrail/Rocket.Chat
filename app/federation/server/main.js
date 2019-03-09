@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 import { settings } from '/app/settings';
 import { FederationKeys } from '/app/models';
+import { getWorkspaceAccessToken } from '/app/cloud';
 
 import './federation-settings';
 import './methods';
@@ -75,6 +76,9 @@ const updateSettings = _.debounce(Meteor.bindEnvironment(function() {
 			domain: _domain.replace('@', '').trim(),
 			url: _peerUrl.replace(/\/+$/, ''),
 			public_key: FederationKeys.getPublicKeyString(),
+		},
+		cloud: {
+			token: getWorkspaceAccessToken(),
 		},
 	};
 

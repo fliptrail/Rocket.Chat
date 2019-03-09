@@ -40,4 +40,4 @@ import '/app/ui-vrecord/client/vrecord.css';
 import '/app/videobridge/client/stylesheets/video.less';
 import '/app/wordpress/client/wordpress-login-button.css';
 import '/app/katex/katex.min.css';
-import '/app/assistify-threading/client/public/stylesheets/threading.css';
+import '/app/threading/client/public/stylesheets/threading.css';
