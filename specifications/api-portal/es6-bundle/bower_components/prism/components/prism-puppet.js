@@ -1,5 +1,5 @@
 (function(Prism){Prism.languages.puppet={heredoc:[// Matches the content of a quoted heredoc string (subject to interpolation)
-{pattern:/(@\("([^"\r\n\/):]+)"(?:\/[nrts$uL]*)?\).*(?:\r?\n|\r))(?:.*(?:\r?\n|\r))*?[ \t]*\|?[ \t]*-?[ \t]*\2/,lookbehind:!0/* ignoreName */ /* skipSlots */,alias:"string",inside:{// Matches the end tag
+{pattern:/(@\("([^"\r\n\/):]+)"(?:\/[nrts$uL]*)?\).*(?:\r?\n|\r))(?:.*(?:\r?\n|\r))*?[ \t]*\|?[ \t]*-?[ \t]*\2/,lookbehind:!0,alias:"string",inside:{// Matches the end tag
 punctuation:/(?=\S).*\S(?= *$)/ // See interpolation below
 }},// Matches the content of an unquoted heredoc string (no interpolation)
 {pattern:/(@\(([^"\r\n\/):]+)(?:\/[nrts$uL]*)?\).*(?:\r?\n|\r))(?:.*(?:\r?\n|\r))*?[ \t]*\|?[ \t]*-?[ \t]*\2/,lookbehind:!0,greedy:!0,alias:"string",inside:{// Matches the end tag

@@ -1,5 +1,5 @@
 (function(Prism){Prism.languages.sass=Prism.languages.extend("css",{// Sass comments don't need to be closed, only indented
-comment:{pattern:/^([ \t]*)\/[\/*].*(?:(?:\r?\n|\r)\1[ \t]+.+)*/m,lookbehind:!0/* ignoreName */ /* skipSlots */}});Prism.languages.insertBefore("sass","atrule",{// We want to consume the whole line
+comment:{pattern:/^([ \t]*)\/[\/*].*(?:(?:\r?\n|\r)\1[ \t]+.+)*/m,lookbehind:!0}});Prism.languages.insertBefore("sass","atrule",{// We want to consume the whole line
 "atrule-line":{// Includes support for = and + shortcuts
 pattern:/^(?:[ \t]*)[@+=].+/m,inside:{atrule:/(?:@[\w-]+|[+=])/m}}});delete Prism.languages.sass.atrule;var variable=/\$[-\w]+|#\{\$[-\w]+\}/,operator=[/[+*\/%]|[=!]=|<=?|>=?|\b(?:and|or|not)\b/,{pattern:/(\s+)-(?=\s)/,lookbehind:!0}];Prism.languages.insertBefore("sass","property",{// We want to consume the whole line
 "variable-line":{pattern:/^[ \t]*\$.+/m,inside:{punctuation:/:/,variable:variable,operator:operator}},// We want to consume the whole line

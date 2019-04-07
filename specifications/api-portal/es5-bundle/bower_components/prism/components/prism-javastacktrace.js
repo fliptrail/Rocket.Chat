@@ -3,7 +3,7 @@ Prism.languages.javastacktrace={// java.sql.SQLException: Violation of unique co
 // Caused by: com.example.myproject.MyProjectServletException
 // Caused by: MidLevelException: LowLevelException
 // Suppressed: Resource$CloseFailException: Resource ID = 0
-summary:{pattern:/^[\t ]*(?:(?:Caused by:|Suppressed:|Exception in thread "[^"]*")[\t ]+)?[\w$.]+(?:\:.*)?$/m,inside:{keyword:{pattern:/^(\s*)(?:(?:Caused by|Suppressed)(?=:)|Exception in thread)/m,lookbehind:!0},// the current thread if the summary starts with 'Exception in thread'
+summary:{pattern:/^[\t ]*(?:(?:Caused by:|Suppressed:|Exception in thread "[^"]*")[\t ]+)?[\w$.]+(?:\:.*)?$/m,inside:{keyword:{pattern:/^(\s*)(?:(?:Caused by|Suppressed)(?=:)|Exception in thread)/m,lookbehind:!0/* ignoreName */ /* skipSlots */},// the current thread if the summary starts with 'Exception in thread'
 string:{pattern:/^(\s*)"[^"]*"/,lookbehind:!0},exceptions:{pattern:/^(:?\s*)[\w$.]+(?=:|$)/,lookbehind:!0,inside:{"class-name":/[\w$]+(?=$|:)/,namespace:/[a-z]\w*/,punctuation:/[.:]/}},message:{pattern:/(:\s*)\S.*/,lookbehind:!0,alias:"string"},punctuation:/[:]/}},// at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1166)
 // at org.hsqldb.jdbc.Util.throwError(Unknown Source) here could be some notes
 // at Util.<init>(Unknown Source)

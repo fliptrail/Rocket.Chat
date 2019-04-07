@@ -1,6 +1,6 @@
 (function(Prism){// We don't allow for pipes inside parentheses
 // to not break table pattern |(. foo |). bar |
-var modifierRegex=/(?:\([^|)]+\)|\[[^\]]+\]|\{[^}]+\})+/.source,modifierTokens={css:{pattern:/\{[^}]+\}/,inside:{rest:Prism.languages.css}},"class-id":{pattern:/(\()[^)]+(?=\))/,lookbehind:!0/* ignoreName */ /* skipSlots */,alias:"attr-value"},lang:{pattern:/(\[)[^\]]+(?=\])/,lookbehind:!0,alias:"attr-value"},// Anything else is punctuation (the first pattern is for row/col spans inside tables)
+var modifierRegex=/(?:\([^|)]+\)|\[[^\]]+\]|\{[^}]+\})+/.source,modifierTokens={css:{pattern:/\{[^}]+\}/,inside:{rest:Prism.languages.css}},"class-id":{pattern:/(\()[^)]+(?=\))/,lookbehind:!0,alias:"attr-value"},lang:{pattern:/(\[)[^\]]+(?=\])/,lookbehind:!0,alias:"attr-value"},// Anything else is punctuation (the first pattern is for row/col spans inside tables)
 punctuation:/[\\\/]\d+|\S/},textile=Prism.languages.textile=Prism.languages.extend("markup",{phrase:{pattern:/(^|\r|\n)\S[\s\S]*?(?=$|\r?\n\r?\n|\r\r)/,lookbehind:!0,inside:{// h1. Header 1
 "block-tag":{pattern:RegExp("^[a-z]\\w*(?:"+modifierRegex+"|[<>=()])*\\."),inside:{modifier:{pattern:RegExp("(^[a-z]\\w*)(?:"+modifierRegex+"|[<>=()])+(?=\\.)"),lookbehind:!0,inside:modifierTokens},tag:/^[a-z]\w*/,punctuation:/\.$/}},// # List item
 // * List item

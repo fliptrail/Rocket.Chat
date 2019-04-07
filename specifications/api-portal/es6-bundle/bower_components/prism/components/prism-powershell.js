@@ -1,4 +1,4 @@
-(function(Prism){var powershell=Prism.languages.powershell={comment:[{pattern:/(^|[^`])<#[\s\S]*?#>/,lookbehind:!0/* ignoreName */ /* skipSlots */},{pattern:/(^|[^`])#.*/,lookbehind:!0}],string:[{pattern:/"(?:`[\s\S]|[^`"])*"/,greedy:!0,inside:{function:{// Allow for one level of nesting
+(function(Prism){var powershell=Prism.languages.powershell={comment:[{pattern:/(^|[^`])<#[\s\S]*?#>/,lookbehind:!0},{pattern:/(^|[^`])#.*/,lookbehind:!0}],string:[{pattern:/"(?:`[\s\S]|[^`"])*"/,greedy:!0,inside:{function:{// Allow for one level of nesting
 pattern:/(^|[^`])\$\((?:\$\(.*?\)|(?!\$\()[^\r\n)])*\)/,lookbehind:!0,// Populated at end of file
 inside:{}}}},{pattern:/'(?:[^']|'')*'/,greedy:!0}],// Matches name spaces as well as casts, attribute decorators. Force starting with letter to avoid matching array indices
 // Supports two levels of nested brackets (e.g. `[OutputType([System.Collections.Generic.List[int]])]`)

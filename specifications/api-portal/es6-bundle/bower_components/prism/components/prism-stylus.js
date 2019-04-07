@@ -1,4 +1,4 @@
-(function(Prism){var inside={url:/url\((["']?).*?\1\)/i,string:{pattern:/("|')(?:(?!\1)[^\\\r\n]|\\(?:\r\n|[\s\S]))*\1/,greedy:!0/* ignoreName */ /* skipSlots */},interpolation:null,// See below
+(function(Prism){var inside={url:/url\((["']?).*?\1\)/i,string:{pattern:/("|')(?:(?!\1)[^\\\r\n]|\\(?:\r\n|[\s\S]))*\1/,greedy:!0},interpolation:null,// See below
 func:null,// See below
 important:/\B!(?:important|optional)\b/i,keyword:{pattern:/(^|\s+)(?:(?:if|else|for|return|unless)(?=\s+|$)|@[\w-]+)/,lookbehind:!0},hexcode:/#[\da-f]{3,6}/i,number:/\b\d+(?:\.\d+)?%?/,boolean:/\b(?:true|false)\b/,operator:[// We want non-word chars around "-" because it is
 // accepted in property names.

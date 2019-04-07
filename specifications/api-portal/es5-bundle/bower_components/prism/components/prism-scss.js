@@ -1,4 +1,4 @@
-Prism.languages.scss=Prism.languages.extend("css",{comment:{pattern:/(^|[^\\])(?:\/\*[\s\S]*?\*\/|\/\/.*)/,lookbehind:!0},atrule:{pattern:/@[\w-]+(?:\([^()]+\)|[^(])*?(?=\s+[{;])/,inside:{rule:/@[\w-]+/ // See rest below
+Prism.languages.scss=Prism.languages.extend("css",{comment:{pattern:/(^|[^\\])(?:\/\*[\s\S]*?\*\/|\/\/.*)/,lookbehind:!0/* ignoreName */ /* skipSlots */},atrule:{pattern:/@[\w-]+(?:\([^()]+\)|[^(])*?(?=\s+[{;])/,inside:{rule:/@[\w-]+/ // See rest below
 }},// url, compassified
 url:/(?:[-a-z]+-)*url(?=\()/i,// CSS selector regex is not appropriate for Sass
 // since there can be lot more things (var, @ directive, nesting..)

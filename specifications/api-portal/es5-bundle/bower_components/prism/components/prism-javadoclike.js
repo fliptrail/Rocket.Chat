@@ -1,4 +1,4 @@
-(function(Prism){var javaDocLike=Prism.languages.javadoclike={parameter:{pattern:/(^\s*(?:\/{3}|\*|\/\*\*)\s*@(?:param|arg|arguments)\s+)\w+/m,lookbehind:!0},keyword:{// keywords are the first word in a line preceded be an `@` or surrounded by curly braces.
+(function(Prism){var javaDocLike=Prism.languages.javadoclike={parameter:{pattern:/(^\s*(?:\/{3}|\*|\/\*\*)\s*@(?:param|arg|arguments)\s+)\w+/m,lookbehind:!0/* ignoreName */ /* skipSlots */},keyword:{// keywords are the first word in a line preceded be an `@` or surrounded by curly braces.
 // @word, {@word}
 pattern:/(^\s*(?:\/{3}|\*|\/\*\*)\s*|\{)@[a-z][a-zA-Z-]+\b/m,lookbehind:!0},punctuation:/[{}]/};/**
 	 * Adds doc comment support to the given language and calls a given callback on each doc comment pattern.

@@ -5,7 +5,7 @@ pattern:/^(?: {4}|\t).+/m,alias:"keyword"},{// `code`
 pattern:/``.+?``|`[^`\n]+`/,alias:"keyword"},{// ```optional language
 // code block
 // ```
-pattern:/^```[\s\S]*?^```$/m,greedy:!0/* ignoreName */ /* skipSlots */,inside:{"code-block":{pattern:/^(```.*(?:\r?\n|\r))[\s\S]+?(?=(?:\r?\n|\r)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{// title 1
+pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\r?\n|\r))[\s\S]+?(?=(?:\r?\n|\r)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{// title 1
 // =======
 // title 2
 // -------

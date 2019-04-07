@@ -1,6 +1,6 @@
 Prism.languages.q={string:/"(?:\\.|[^"\\\r\n])*"/,comment:[// From http://code.kx.com/wiki/Reference/Slash:
 // When / is following a space (or a right parenthesis, bracket, or brace), it is ignored with the rest of the line.
-{pattern:/([\t )\]}])\/.*/,lookbehind:!0/* ignoreName */ /* skipSlots */,greedy:!0},// From http://code.kx.com/wiki/Reference/Slash:
+{pattern:/([\t )\]}])\/.*/,lookbehind:!0,greedy:!0},// From http://code.kx.com/wiki/Reference/Slash:
 // A line which has / as its first character and contains at least one other non-whitespace character is a whole-line comment and is ignored entirely.
 // A / on a line by itself begins a multiline comment which is terminated by the next \ on a line by itself.
 // If a / is not matched by a \, the multiline comment is unterminated and continues to end of file.

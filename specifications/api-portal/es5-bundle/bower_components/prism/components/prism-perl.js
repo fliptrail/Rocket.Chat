@@ -1,5 +1,5 @@
 Prism.languages.perl={comment:[{// POD
-pattern:/(^\s*)=\w+[\s\S]*?=cut.*/m,lookbehind:!0},{pattern:/(^|[^\\$])#.*/,lookbehind:!0}],// TODO Could be nice to handle Heredoc too.
+pattern:/(^\s*)=\w+[\s\S]*?=cut.*/m,lookbehind:!0/* ignoreName */ /* skipSlots */},{pattern:/(^|[^\\$])#.*/,lookbehind:!0}],// TODO Could be nice to handle Heredoc too.
 string:[// q/.../
 {pattern:/\b(?:q|qq|qx|qw)\s*([^a-zA-Z0-9\s{(\[<])(?:(?!\1)[^\\]|\\[\s\S])*\1/,greedy:!0},// q a...a
 {pattern:/\b(?:q|qq|qx|qw)\s+([a-zA-Z0-9])(?:(?!\1)[^\\]|\\[\s\S])*\1/,greedy:!0},// q(...)

@@ -1,6 +1,6 @@
 (function(Prism){var insideString={variable:[// Arithmetic Environment
 {pattern:/\$?\(\([\s\S]+?\)\)/,inside:{// If there is a $ sign at the beginning highlight $(( and )) as variable
-variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+\.?\d*|\B\.\d+)(?:[Ee]-?\d+)?/,// Operators according to https://www.gnu.org/software/bash/manual/bashref.html#Shell-Arithmetic
+variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0/* ignoreName */ /* skipSlots */},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+\.?\d*|\B\.\d+)(?:[Ee]-?\d+)?/,// Operators according to https://www.gnu.org/software/bash/manual/bashref.html#Shell-Arithmetic
 operator:/--?|-=|\+\+?|\+=|!=?|~|\*\*?|\*=|\/=?|%=?|<<=?|>>=?|<=?|>=?|==?|&&?|&=|\^=?|\|\|?|\|=|\?|:/,// If there is no $ sign at the beginning highlight (( and )) as punctuation
 punctuation:/\(\(?|\)\)?|,|;/}},// Command Substitution
 {pattern:/\$\([^)]+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},/\$(?:[\w#?*!@]+|\{[^}]+\})/i]};Prism.languages.bash={shebang:{pattern:/^#!\s*\/bin\/bash|^#!\s*\/bin\/sh/,alias:"important"},comment:{pattern:/(^|[^"{\\])#.*/,lookbehind:!0},string:[//Support for Here-Documents https://en.wikipedia.org/wiki/Here_document

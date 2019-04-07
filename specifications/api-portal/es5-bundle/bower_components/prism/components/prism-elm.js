@@ -1,4 +1,4 @@
-Prism.languages.elm={comment:/--.*|{-[\s\S]*?-}/,char:{pattern:/'(?:[^\\'\r\n]|\\(?:[abfnrtv\\']|\d+|x[0-9a-fA-F]+))'/,greedy:!0},string:[{// Multiline strings are wrapped in triple ". Quotes may appear unescaped.
+Prism.languages.elm={comment:/--.*|{-[\s\S]*?-}/,char:{pattern:/'(?:[^\\'\r\n]|\\(?:[abfnrtv\\']|\d+|x[0-9a-fA-F]+))'/,greedy:!0/* ignoreName */ /* skipSlots */},string:[{// Multiline strings are wrapped in triple ". Quotes may appear unescaped.
 pattern:/"""[\s\S]*?"""/,greedy:!0},{pattern:/"(?:[^\\"\r\n]|\\(?:[abfnrtv\\"]|\d+|x[0-9a-fA-F]+))*"/,greedy:!0}],import_statement:{// The imported or hidden names are not included in this import
 // statement. This is because we want to highlight those exactly like
 // we do for the names in the program.
