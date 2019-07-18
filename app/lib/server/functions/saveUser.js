@@ -10,7 +10,7 @@ import { settings } from '../../../settings';
 import PasswordPolicy from '../lib/PasswordPolicyClass';
 import { validateEmailDomain } from '../lib';
 
-import { checkEmailAvailability, checkUsernameAvailability, setUserAvatar, setEmail, setRealName, setUsername } from '.';
+import { checkEmailAvailability, checkUsernameAvailability, setUserAvatar, setEmail, setRealName, setUsername, setStatusText } from '.';
 
 const passwordPolicy = new PasswordPolicy();
 
@@ -133,6 +133,13 @@ function validateUserEditing(userId, userData) {
 		});
 	}
 
+	if (userData.statusText && !settings.get('Accounts_AllowUserStatusMessageChange') && (!canEditOtherUserInfo || editingMyself)) {
+		throw new Meteor.Error('error-action-not-allowed', 'Edit user status is not allowed', {
+			method: 'insertOrUpdateUser',
+			action: 'Update_user',
+		});
+	}
+
 	if (userData.name && !settings.get('Accounts_AllowRealNameChange') && (!canEditOtherUserInfo || editingMyself)) {
 		throw new Meteor.Error('error-action-not-allowed', 'Edit user real name is not allowed', {
 			method: 'insertOrUpdateUser',
@@ -159,7 +166,9 @@ export const saveUser = function(userId, userData) {
 	validateUserData(userId, userData);
 
 	if (!userData._id) {
-		validateEmailDomain(userData.email);
+		if (userData.email) {
+			validateEmailDomain(userData.email);
+		}
 
 		// insert user
 		const createUser = {
@@ -169,6 +178,10 @@ export const saveUser = function(userId, userData) {
 		};
 		if (userData.email) {
 			createUser.email = userData.email;
+		}
+		if (userData.u) {
+			createUser.u = userData.u;
+			createUser.active = userData.active;
 		}
 
 		const _id = Accounts.createUser(createUser);
@@ -190,6 +203,10 @@ export const saveUser = function(userId, userData) {
 
 		if (typeof userData.verified === 'boolean') {
 			updateUser.$set['emails.0.verified'] = userData.verified;
+		}
+
+		if (typeof userData.description !== 'undefined') {
+			updateUser.$set.description = userData.description;
 		}
 
 		Meteor.users.update({ _id }, updateUser);
@@ -244,7 +261,13 @@ export const saveUser = function(userId, userData) {
 		setUsername(userData._id, userData.username);
 	}
 
-	setRealName(userData._id, userData.name);
+	if (userData.hasOwnProperty('name')) {
+		setRealName(userData._id, userData.name);
+	}
+
+	if (typeof userData.statusText === 'string') {
+		setStatusText(userData._id, userData.statusText);
+	}
 
 	if (userData.email) {
 		const shouldSendVerificationEmailToUser = userData.verified !== true;

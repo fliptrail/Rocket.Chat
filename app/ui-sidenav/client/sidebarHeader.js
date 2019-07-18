@@ -2,15 +2,18 @@ import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Template } from 'meteor/templating';
+import toastr from 'toastr';
+import { Session } from 'meteor/session';
 
 import { popover, AccountBox, menu, SideNav, modal } from '../../ui-utils';
 import { t, getUserPreference, handleError } from '../../utils';
 import { callbacks } from '../../callbacks';
 import { settings } from '../../settings';
 import { hasAtLeastOnePermission } from '../../authorization';
+import { userStatus } from '../../user-status';
 
-const setStatus = (status) => {
-	AccountBox.setStatus(status);
+const setStatus = (status, statusText) => {
+	AccountBox.setStatus(status, statusText);
 	callbacks.run('userStatusManuallySet', status);
 	popover.close();
 };
@@ -68,6 +71,24 @@ const toolbarButtons = (user) => [{
 	action: () => {
 		menu.close();
 		FlowRouter.go('directory');
+	},
+},
+{
+	name: t('Service_account_login'),
+	icon: 'reload',
+	active: Session.get('saNotification'),
+	condition: () => !Meteor.user().u || (Meteor.user().u && localStorage.getItem('serviceAccountForceLogin')),
+	action: (e) => {
+		const options = [];
+		const config = {
+			template: 'serviceAccountSidebarLogin',
+			currentTarget: e.currentTarget,
+			data: {
+				options,
+			},
+			offsetVertical: e.currentTarget.clientHeight + 10,
+		};
+		popover.open(config);
 	},
 },
 {
@@ -172,41 +193,64 @@ const toolbarButtons = (user) => [{
 		};
 
 		const discussionEnabled = settings.get('Discussion_enabled');
-		if (!discussionEnabled) {
-			return createChannel(e);
+		const serviceAccountEnabled = settings.get('Service_account_enabled');
+		const items = [{
+			icon: 'hashtag',
+			name: t('Channel'),
+			action: createChannel,
+		}];
+		if (discussionEnabled) {
+			items.push({
+				icon: 'discussion',
+				name: t('Discussion'),
+				action: (e) => {
+					e.preventDefault();
+					modal.open({
+						title: t('Discussion_title'),
+						content: 'CreateDiscussion',
+						data: {
+							onCreate() {
+								modal.close();
+							},
+						},
+						modifier: 'modal',
+						showConfirmButton: false,
+						showCancelButton: false,
+						confirmOnEnter: false,
+					});
+				},
+			});
 		}
+
+		if (serviceAccountEnabled && hasAtLeastOnePermission(['create-service-account'])) {
+			items.push({
+				icon: 'user',
+				name: t('Service_account'),
+				action: (e) => {
+					e.preventDefault();
+					modal.open({
+						title: t('Service_account_title'),
+						content: 'createServiceAccount',
+						data: {
+							onCreate() {
+								modal.close();
+							},
+						},
+						modifier: 'modal',
+						showConfirmButton: false,
+						showCancelButton: false,
+						confirmOnEnter: false,
+					});
+				},
+			});
+		}
+
 		const config = {
 			columns: [
 				{
 					groups: [
 						{
-							items: [
-								{
-									icon: 'hashtag',
-									name: t('Channel'),
-									action: createChannel,
-								},
-								{
-									icon: 'discussion',
-									name: t('Discussion'),
-									action: (e) => {
-										e.preventDefault();
-										modal.open({
-											title: t('Discussion_title'),
-											content: 'CreateDiscussion',
-											data: {
-												onCreate() {
-													modal.close();
-												},
-											},
-											modifier: 'modal',
-											showConfirmButton: false,
-											showCancelButton: false,
-											confirmOnEnter: false,
-										});
-									},
-								},
-							],
+							items,
 						},
 					],
 				},
@@ -215,6 +259,23 @@ const toolbarButtons = (user) => [{
 			offsetVertical: e.currentTarget.clientHeight + 10,
 		};
 		popover.open(config);
+	},
+},
+{
+	name: t('Articles'),
+	icon: 'articles',
+	condition: () => settings.get('Articles_enabled'),
+	action: () => {
+		const loginToken = localStorage.getItem('Meteor.loginToken');
+
+		Meteor.call('redirectUserToArticles', loginToken, (error, result) => {
+			if (error) {
+				return handleError(error);
+			}
+			const redirectWindow = window.open(result.link, '_blank');
+			toastr.success(result.message, 'Success');
+			redirectWindow.location;
+		});
 	},
 },
 {
@@ -294,7 +355,7 @@ Template.sidebarHeader.helpers({
 			};
 		}
 		return id && Meteor.users.findOne(id, { fields: {
-			username: 1, status: 1,
+			username: 1, status: 1, statusText: 1,
 		} });
 	},
 	toolbarButtons() {
@@ -315,39 +376,67 @@ Template.sidebarHeader.events({
 	'click .sidebar__header .avatar'(e) {
 		if (!(Meteor.userId() == null && settings.get('Accounts_AllowAnonymousRead'))) {
 			const user = Meteor.user();
+			const STATUS_MAP = [
+				'offline',
+				'online',
+				'away',
+				'busy',
+			];
+			const userStatusList = Object.keys(userStatus.list).map((key) => {
+				const status = userStatus.list[key];
+				const name = status.localizeName ? t(status.name) : status.name;
+				const modifier = status.statusType || user.status;
+				const defaultStatus = STATUS_MAP.includes(status.id);
+				const statusText = defaultStatus ? null : name;
+
+				return {
+					icon: 'circle',
+					name,
+					modifier,
+					action: () => setStatus(status.statusType, statusText),
+				};
+			});
+
+			const statusText = user.statusText || t(user.status);
+
+			userStatusList.push({
+				icon: 'edit',
+				name: t('Edit_Status'),
+				type: 'open',
+				action: (e) => {
+					e.preventDefault();
+					modal.open({
+						title: t('Edit_Status'),
+						content: 'editStatus',
+						data: {
+							onSave() {
+								modal.close();
+							},
+						},
+						modalClass: 'modal',
+						showConfirmButton: false,
+						showCancelButton: false,
+						confirmOnEnter: false,
+					});
+				},
+			});
+
 			const config = {
 				popoverClass: 'sidebar-header',
 				columns: [
 					{
 						groups: [
 							{
+								title: user.name,
+								items: [{
+									icon: 'circle',
+									name: statusText,
+									modifier: user.status,
+								}],
+							},
+							{
 								title: t('User'),
-								items: [
-									{
-										icon: 'circle',
-										name: t('online'),
-										modifier: 'online',
-										action: () => setStatus('online'),
-									},
-									{
-										icon: 'circle',
-										name: t('away'),
-										modifier: 'away',
-										action: () => setStatus('away'),
-									},
-									{
-										icon: 'circle',
-										name: t('busy'),
-										modifier: 'busy',
-										action: () => setStatus('busy'),
-									},
-									{
-										icon: 'circle',
-										name: t('invisible'),
-										modifier: 'offline',
-										action: () => setStatus('offline'),
-									},
-								],
+								items: userStatusList,
 							},
 							{
 								items: [
@@ -371,7 +460,7 @@ Template.sidebarHeader.events({
 										action: () => {
 											Meteor.logout(() => {
 												callbacks.run('afterLogoutCleanUp', user);
-												Meteor.call('logoutCleanUp', user);
+												Meteor.call('logoutCleanUp', user, document.cookie);
 												FlowRouter.go('home');
 												popover.close();
 											});
