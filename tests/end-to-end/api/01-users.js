@@ -495,7 +495,6 @@ describe('[Users]', function() {
 			updateSetting('Accounts_AllowUserProfileChange', true)
 				.then(() => updateSetting('Accounts_AllowUsernameChange', true))
 				.then(() => updateSetting('Accounts_AllowRealNameChange', true))
-				.then(() => updateSetting('Accounts_AllowUserStatusMessageChange', true))
 				.then(() => updateSetting('Accounts_AllowEmailChange', true))
 				.then(() => updateSetting('Accounts_AllowPasswordChange', true))
 				.then(done);
@@ -504,7 +503,6 @@ describe('[Users]', function() {
 			updateSetting('Accounts_AllowUserProfileChange', true)
 				.then(() => updateSetting('Accounts_AllowUsernameChange', true))
 				.then(() => updateSetting('Accounts_AllowRealNameChange', true))
-				.then(() => updateSetting('Accounts_AllowUserStatusMessageChange', true))
 				.then(() => updateSetting('Accounts_AllowEmailChange', true))
 				.then(() => updateSetting('Accounts_AllowPasswordChange', true))
 				.then(done);
@@ -652,50 +650,6 @@ describe('[Users]', function() {
 								userId: targetUser._id,
 								data: {
 									name: 'Fake name',
-								},
-							})
-							.expect('Content-Type', 'application/json')
-							.expect(200)
-							.expect((res) => {
-								expect(res.body).to.have.property('success', true);
-							})
-							.end(done);
-					});
-			});
-		});
-
-		it('should return an error when trying update user status message and it is not allowed', (done) => {
-			updatePermission('edit-other-user-info', ['user']).then(() => {
-				updateSetting('Accounts_AllowUserStatusMessageChange', false)
-					.then(() => {
-						request.post(api('users.update'))
-							.set(credentials)
-							.send({
-								userId: targetUser._id,
-								data: {
-									statusMessage: 'a new status',
-								},
-							})
-							.expect('Content-Type', 'application/json')
-							.expect(400)
-							.expect((res) => {
-								expect(res.body).to.have.property('success', false);
-							})
-							.end(done);
-					});
-			});
-		});
-
-		it('should update user status message when the required permission is applied', (done) => {
-			updatePermission('edit-other-user-info', ['admin']).then(() => {
-				updateSetting('Accounts_AllowUserStatusMessageChange', false)
-					.then(() => {
-						request.post(api('users.update'))
-							.set(credentials)
-							.send({
-								userId: targetUser._id,
-								data: {
-									name: 'a new status',
 								},
 							})
 							.expect('Content-Type', 'application/json')
@@ -1697,37 +1651,6 @@ describe('[Users]', function() {
 					})
 					.end(done);
 			});
-		});
-	});
-	describe('[Service Accounts]', () => {
-		it('should create a new service account', (done) => {
-			const username = `serviceAccount_${ apiUsername }`;
-			const description = 'Test Service Account';
-
-			request.post(api('serviceAccounts.create'))
-				.set(credentials)
-				.send({
-					name: username,
-					username,
-					description,
-					password,
-				})
-				.expect('Content-Type', 'application/json')
-				.expect(200)
-				.expect((res) => {
-					expect(res.body).to.have.property('success', true);
-					expect(res.body).to.have.nested.property('user.username', username);
-					expect(res.body).to.have.nested.property('user.u.username');
-					expect(res.body).to.have.nested.property('user.active', false);
-					expect(res.body).to.have.nested.property('user.name', username);
-					expect(res.body).to.have.nested.property('user.description', description);
-					expect(res.body).to.not.have.nested.property('user.e2e');
-					expect(res.body).to.not.have.nested.property('user.customFields');
-
-					targetUser._id = res.body.user._id;
-					targetUser.username = res.body.user.username;
-				})
-				.end(done);
 		});
 	});
 });

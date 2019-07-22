@@ -322,13 +322,12 @@ Template.room.helpers({
 	roomLeader() {
 		const roles = RoomRoles.findOne({ rid: this._id, roles: 'leader', 'u._id': { $ne: Meteor.userId() } });
 		if (roles) {
-			const leader = Users.findOne({ _id: roles.u._id }, { fields: { status: 1, statusText: 1 } }) || {};
-
+			const leader = Users.findOne({ _id: roles.u._id }, { fields: { status: 1 } }) || {};
 			return {
 				...roles.u,
 				name: settings.get('UI_Use_Real_Name') ? roles.u.name || roles.u.username : roles.u.username,
 				status: leader.status || 'offline',
-				statusDisplay: leader.statusText || t(leader.status || 'offline'),
+				statusDisplay: ((status) => status.charAt(0).toUpperCase() + status.slice(1))(leader.status || 'offline'),
 			};
 		}
 	},
@@ -392,6 +391,11 @@ Template.room.helpers({
 		}
 
 		return roomIcon;
+	},
+
+	userStatus() {
+		const { room } = Template.instance();
+		return roomTypes.getUserStatus(room.t, this._id) || 'offline';
 	},
 
 	maxMessageLength() {
@@ -946,14 +950,6 @@ Template.room.events({
 		}
 
 		await call('sendMessage', msgObject);
-	},
-	'click .js-actionButton-openRoom'(event) {
-		const rid = event.currentTarget.value;
-		if (!rid) {
-			return;
-		}
-
-		FlowRouter.goToRoomById(rid);
 	},
 	'click .js-actionButton-respondWithMessage'(event, instance) {
 		const rid = instance.data._id;

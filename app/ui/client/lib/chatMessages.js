@@ -249,8 +249,8 @@ export class ChatMessages {
 
 		messageBoxState.save({ rid, tmid }, this.input);
 
-		let msg = value.trim();
-		if (msg) {
+		let msg = value;
+		if (value.trim()) {
 			const mention = this.$input.data('mention-user') || false;
 			const replies = this.$input.data('reply') || [];
 			if (!mention || !threadsEnabled) {
@@ -260,6 +260,8 @@ export class ChatMessages {
 			if (mention && threadsEnabled && replies.length) {
 				tmid = replies[0]._id;
 			}
+		} else {
+			msg = '';
 		}
 
 		if (msg) {
@@ -278,6 +280,7 @@ export class ChatMessages {
 				await this.processMessageSend(message);
 				this.$input.removeData('reply').trigger('dataChange');
 			} catch (error) {
+				console.error(error);
 				handleError(error);
 			}
 			return done();
@@ -296,6 +299,7 @@ export class ChatMessages {
 				this.resetToDraft(this.editing.id);
 				this.confirmDeleteMsg(message, done);
 			} catch (error) {
+				console.error(error);
 				handleError(error);
 			}
 		}

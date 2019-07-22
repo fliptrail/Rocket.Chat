@@ -2,12 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
 import _ from 'underscore';
 
-let timed = false;
-
-if (Meteor.isClient) {
-	const { getConfig } = require('../../ui-utils/client/config');
-	timed = [getConfig('debug'), getConfig('timed-callbacks')].includes('true');
-}
 /*
 * Callback hooks provide an easy way to add extra steps to common operations.
 * @namespace RocketChat.callbacks
@@ -15,48 +9,15 @@ if (Meteor.isClient) {
 
 export const callbacks = {};
 
-const wrapCallback = (callback) => (...args) => {
-	const time = Date.now();
-	const result = callback(...args);
-	const currentTime = Date.now() - time;
-	let stack = callback.stack
-		&& typeof callback.stack.split === 'function'
-		&& callback.stack.split('\n');
-	stack = stack && stack[2] && (stack[2].match(/\(.+\)/) || [])[0];
-	console.log(String(currentTime), callback.hook, callback.id, stack);
-	return result;
-};
-
-const wrapRun = (hook, fn) => (...args) => {
-	const time = Date.now();
-	const ret = fn(...args);
-	const totalTime = Date.now() - time;
-	console.log(`${ hook }:`, totalTime);
-	return ret;
-};
-
-const handleResult = (fn) => (result, constant) => {
-	const callbackResult = callbacks.runItem({ hook: fn.hook, callback: fn, result, constant });
-	return typeof callbackResult === 'undefined' ? result : callbackResult;
-};
+if (Meteor.isServer) {
+	callbacks.showTime = true;
+	callbacks.showTotalTime = true;
+} else {
+	callbacks.showTime = false;
+	callbacks.showTotalTime = false;
+}
 
 
-const identity = (e) => e;
-const pipe = (f, g) => (e, ...constants) => g(f(e, ...constants), ...constants);
-const createCallback = (hook, callbacks) => callbacks.map(handleResult).reduce(pipe, identity);
-
-const createCallbackTimed = (hook, callbacks) =>
-	wrapRun(hook,
-		callbacks
-			.map(wrapCallback)
-			.map(handleResult)
-			.reduce(pipe, identity)
-	);
-
-const create = (hook, cbs) =>
-	(timed ? createCallbackTimed(hook, cbs) : createCallback(hook, cbs));
-const combinedCallbacks = new Map();
-this.combinedCallbacks = combinedCallbacks;
 /*
 * Callback priorities
 */
@@ -75,24 +36,26 @@ const getHooks = (hookName) => callbacks[hookName] || [];
 * @param {Function} callback - The callback function
 */
 
-callbacks.add = function(
-	hook,
-	callback,
-	priority = callbacks.priority.MEDIUM,
-	id = Random.id()
-) {
-	callbacks[hook] = getHooks(hook);
-	if (callbacks[hook].find((cb) => cb.id === id)) {
-		return;
+callbacks.add = function(hook, callback, priority, id = Random.id()) {
+	if (!_.isNumber(priority)) {
+		priority = callbacks.priority.MEDIUM;
 	}
-	callback.hook = hook;
 	callback.priority = priority;
 	callback.id = id;
-	callback.stack = new Error().stack;
+	callbacks[hook] = getHooks(hook);
 
+	if (callbacks.showTime === true) {
+		const err = new Error();
+		callback.stack = err.stack;
+	}
+
+	if (callbacks[hook].find((cb) => cb.id === callback.id)) {
+		return;
+	}
 	callbacks[hook].push(callback);
-	callbacks[hook] = _.sortBy(callbacks[hook], (callback) => callback.priority || callbacks.priority.MEDIUM);
-	combinedCallbacks.set(hook, create(hook, callbacks[hook]));
+	callbacks[hook] = _.sortBy(callbacks[hook], function(callback) {
+		return callback.priority || callbacks.priority.MEDIUM;
+	});
 };
 
 
@@ -104,10 +67,11 @@ callbacks.add = function(
 
 callbacks.remove = function(hook, id) {
 	callbacks[hook] = getHooks(hook).filter((callback) => callback.id !== id);
-	combinedCallbacks.set(hook, create(hook, callbacks[hook]));
 };
 
-callbacks.runItem = ({ callback, result, constant /* , hook */ }) => callback(result, constant);
+callbacks.runItem = function({ callback, result, constant /* , hook */ }) {
+	return callback(result, constant);
+};
 
 /*
 * Successively run all of a hook's callbacks on an item
@@ -118,18 +82,38 @@ callbacks.runItem = ({ callback, result, constant /* , hook */ }) => callback(re
 */
 
 callbacks.run = function(hook, item, constant) {
-	const runner = combinedCallbacks.get(hook);
-	if (!runner) {
+	const callbackItems = callbacks[hook];
+	if (!callbackItems || !callbackItems.length) {
 		return item;
 	}
 
-	return runner(item, constant);
+	let totalTime = 0;
+	const result = callbackItems.reduce(function(result, callback) {
+		const time = callbacks.showTime === true || callbacks.showTotalTime === true ? Date.now() : 0;
 
-	// return callbackItems.reduce(function(result, callback) {
-	// 	const callbackResult = callbacks.runItem({ hook, callback, result, constant });
+		const callbackResult = callbacks.runItem({ hook, callback, result, constant, time });
 
-	// 	return typeof callbackResult === 'undefined' ? result : callbackResult;
-	// }, item);
+		if (callbacks.showTime === true || callbacks.showTotalTime === true) {
+			const currentTime = Date.now() - time;
+			totalTime += currentTime;
+			if (callbacks.showTime === true) {
+				if (!Meteor.isServer) {
+					let stack = callback.stack && typeof callback.stack.split === 'function' && callback.stack.split('\n');
+					stack = stack && stack[2] && (stack[2].match(/\(.+\)/) || [])[0];
+					console.log(String(currentTime), hook, callback.id, stack);
+				}
+			}
+		}
+		return typeof callbackResult === 'undefined' ? result : callbackResult;
+	}, item);
+
+	if (callbacks.showTotalTime === true) {
+		if (!Meteor.isServer) {
+			console.log(`${ hook }:`, totalTime);
+		}
+	}
+
+	return result;
 };
 
 
@@ -140,10 +124,12 @@ callbacks.run = function(hook, item, constant) {
 * @param {Object} [constant] - An optional constant that will be passed along to each callback
 */
 
-callbacks.runAsync = Meteor.isServer ? function(hook, item, constant) {
+callbacks.runAsync = function(hook, item, constant) {
 	const callbackItems = callbacks[hook];
-	if (callbackItems && callbackItems.length) {
-		callbackItems.forEach((callback) => Meteor.defer(function() { callback(item, constant); }));
+	if (Meteor.isServer && callbackItems && callbackItems.length) {
+		Meteor.defer(function() {
+			callbackItems.forEach((callback) => callback(item, constant));
+		});
 	}
 	return item;
-} : () => { throw new Error('callbacks.runAsync on client server not allowed'); };
+};

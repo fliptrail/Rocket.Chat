@@ -16,6 +16,7 @@ const commands = {
 		FlowRouter.go(data.path, null, FlowRouter.current().queryParams);
 	},
 
+
 	'set-user-status'(data) {
 		AccountBox.setStatus(data.status);
 	},
@@ -56,7 +57,7 @@ const commands = {
 		const user = Meteor.user();
 		Meteor.logout(() => {
 			callbacks.run('afterLogoutCleanUp', user);
-			Meteor.call('logoutCleanUp', user, document.cookie);
+			Meteor.call('logoutCleanUp', user);
 			return FlowRouter.go('home');
 		});
 	},

@@ -38,7 +38,6 @@ Meteor.methods({
 			sidebarHideAvatar: Match.Optional(Boolean),
 			sidebarGroupByType: Match.Optional(Boolean),
 			sidebarShowDiscussion: Match.Optional(Boolean),
-			sidebarShowServiceAccounts: Match.Optional(Boolean),
 			muteFocusedConversations: Match.Optional(Boolean),
 		};
 		check(settings, Match.ObjectIncluding(keys));

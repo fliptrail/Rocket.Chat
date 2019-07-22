@@ -44,10 +44,6 @@ settings.addGroup('Accounts', function() {
 		type: 'boolean',
 		public: true,
 	});
-	this.add('Accounts_AllowUserStatusMessageChange', true, {
-		type: 'boolean',
-		public: true,
-	});
 	this.add('Accounts_AllowUsernameChange', true, {
 		type: 'boolean',
 		public: true,
@@ -2664,17 +2660,6 @@ settings.addGroup('Setup_Wizard', function() {
 			secret: true,
 		});
 
-		this.add('Cloud_Workspace_PublicKey', '', {
-			type: 'string',
-			hidden: true,
-			readonly: true,
-			enableQuery: {
-				_id: 'Register_Server',
-				value: true,
-			},
-			secret: true,
-		});
-
 		this.add('Cloud_Workspace_License', '', {
 			type: 'string',
 			hidden: true,
@@ -2745,10 +2730,9 @@ settings.addGroup('Rate Limiter', function() {
 	});
 
 	this.section('API Rate Limiter', function() {
-		this.add('API_Enable_Rate_Limiter', true, { type: 'boolean' });
-		this.add('API_Enable_Rate_Limiter_Dev', true, { type: 'boolean', enableQuery: { _id: 'API_Enable_Rate_Limiter', value: true } });
-		this.add('API_Enable_Rate_Limiter_Limit_Calls_Default', 10, { type: 'int', enableQuery: { _id: 'API_Enable_Rate_Limiter', value: true } });
-		this.add('API_Enable_Rate_Limiter_Limit_Time_Default', 60000, { type: 'int', enableQuery: { _id: 'API_Enable_Rate_Limiter', value: true } });
+		this.add('API_Enable_Rate_Limiter_Dev', true, { type: 'boolean' });
+		this.add('API_Enable_Rate_Limiter_Limit_Calls_Default', 10, { type: 'int' });
+		this.add('API_Enable_Rate_Limiter_Limit_Time_Default', 60000, { type: 'int' });
 	});
 });
 

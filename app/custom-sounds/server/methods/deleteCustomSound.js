@@ -10,7 +10,7 @@ Meteor.methods({
 		let sound = null;
 
 		if (hasPermission(this.userId, 'manage-sounds')) {
-			sound = CustomSounds.findOneById(_id);
+			sound = CustomSounds.findOneByID(_id);
 		} else {
 			throw new Meteor.Error('not_authorized');
 		}
@@ -20,7 +20,7 @@ Meteor.methods({
 		}
 
 		RocketChatFileCustomSoundsInstance.deleteFile(`${ sound._id }.${ sound.extension }`);
-		CustomSounds.removeById(_id);
+		CustomSounds.removeByID(_id);
 		Notifications.notifyAll('deleteCustomSound', { soundData: sound });
 
 		return true;

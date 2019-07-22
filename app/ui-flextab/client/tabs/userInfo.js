@@ -13,7 +13,6 @@ import { RoomRoles, UserRoles, Roles } from '../../../models';
 import { settings } from '../../../settings';
 import FullUser from '../../../models/client/models/FullUser';
 import { getActions } from './userActions';
-
 import './userInfo.html';
 
 const shownActionsCount = 2;
@@ -83,17 +82,7 @@ Template.userInfo.helpers({
 	userStatus() {
 		const user = Template.instance().user.get();
 		const userStatus = Session.get(`user_${ user.username }_status`);
-		return userStatus || TAPi18n.__('offline');
-	},
-
-	userStatusText() {
-		if (s.trim(this.statusText)) {
-			return this.statusText;
-		}
-
-		const user = Template.instance().user.get();
-		const userStatus = Session.get(`user_${ user.username }_status`);
-		return userStatus || TAPi18n.__('offline');
+		return userStatus;
 	},
 
 	email() {

@@ -60,7 +60,6 @@ Meteor.methods({
 				username: 1,
 				name: 1,
 				status: 1,
-				statusText: 1,
 			},
 			sort: {},
 		};

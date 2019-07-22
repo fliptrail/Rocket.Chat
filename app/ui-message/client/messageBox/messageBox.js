@@ -265,15 +265,6 @@ const handleFormattingShortcut = (event, instance) => {
 	return true;
 };
 
-let sendOnEnter;
-let sendOnEnterActive;
-
-Tracker.autorun(() => {
-	sendOnEnter = getUserPreference(Meteor.userId(), 'sendOnEnter');
-	sendOnEnterActive = sendOnEnter == null || sendOnEnter === 'normal'
-		|| (sendOnEnter === 'desktop' && Meteor.Device.isDesktop());
-});
-
 const handleSubmit = (event, instance) => {
 	const { which: keyCode } = event;
 
@@ -283,6 +274,9 @@ const handleSubmit = (event, instance) => {
 		return false;
 	}
 
+	const sendOnEnter = getUserPreference(Meteor.userId(), 'sendOnEnter');
+	const sendOnEnterActive = sendOnEnter == null || sendOnEnter === 'normal'
+		|| (sendOnEnter === 'desktop' && Meteor.Device.isDesktop());
 	const withModifier = event.shiftKey || event.ctrlKey || event.altKey || event.metaKey;
 	const isSending = (sendOnEnterActive && !withModifier) || (!sendOnEnterActive && withModifier);
 

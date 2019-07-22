@@ -11,9 +11,6 @@ const checked = function(prop, field) {
 	if (prop === 'sidebarShowDiscussion') {
 		return getUserPreference(userId, 'sidebarShowDiscussion');
 	}
-	if (prop === 'sidebarShowServiceAccounts') {
-		return getUserPreference(userId, 'sidebarShowServiceAccounts');
-	}
 	if (prop === 'sidebarShowFavorites') {
 		return getUserPreference(userId, 'sidebarShowFavorites');
 	}

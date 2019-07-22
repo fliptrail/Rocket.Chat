@@ -57,7 +57,7 @@ if (Meteor.isServer) {
 		ServiceConfiguration.configurations.upsert({ service: 'dolphin' }, { $set: data });
 	}
 
-	callbacks.add('beforeCreateUser', DolphinOnCreateUser, callbacks.priority.HIGH, 'dolphin');
+	callbacks.add('beforeCreateUser', DolphinOnCreateUser, callbacks.priority.HIGH);
 } else {
 	Meteor.startup(() =>
 		Tracker.autorun(function() {

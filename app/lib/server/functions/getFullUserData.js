@@ -15,7 +15,6 @@ const defaultFields = {
 	type: 1,
 	active: 1,
 	reason: 1,
-	statusText: 1,
 };
 
 const fullFields = {

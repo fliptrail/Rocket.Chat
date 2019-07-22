@@ -204,10 +204,6 @@ Template.message.helpers({
 			return 'own';
 		}
 	},
-	t() {
-		const { msg } = this;
-		return msg.t;
-	},
 	timestamp() {
 		const { msg } = this;
 		return +msg.ts;
@@ -444,34 +440,33 @@ Template.message.helpers({
 
 const findParentMessage = (() => {
 	const waiting = [];
-	const uid = Tracker.nonreactive(() => Meteor.userId());
+
 	const getMessages = _.debounce(async function() {
+		const uid = Tracker.nonreactive(() => Meteor.userId());
 		const _tmp = [...waiting];
 		waiting.length = 0;
-		(await call('getMessages', _tmp)).map((msg) => Messages.findOne({ _id: msg._id }) || upsertMessage({ msg: { ...msg, _hidden: true }, uid }));
+		(await call('getMessages', _tmp)).map((msg) => upsertMessage({ msg, uid }));
 	}, 500);
-
 
 	return (tmid) => {
 		if (waiting.indexOf(tmid) > -1) {
 			return;
 		}
+
 		const message = Messages.findOne({ _id: tmid });
-		if (!message) {
-			waiting.push(tmid);
-			return getMessages();
-		}
-		return Messages.update(
-			{ tmid, repliesCount: { $exists: 0 } },
-			{
+		if (message) {
+			const uid = Tracker.nonreactive(() => Meteor.userId());
+			return Messages.update({ tmid, repliesCount: { $exists: 0 } }, {
 				$set: {
 					following: message.replies && message.replies.indexOf(uid) > -1,
 					threadMsg: normalizeThreadMessage(message),
 					repliesCount: message.tcount,
 				},
-			},
-			{ multi: true }
-		);
+			}, { multi: true });
+		}
+
+		waiting.push(tmid);
+		getMessages();
 	};
 })();
 

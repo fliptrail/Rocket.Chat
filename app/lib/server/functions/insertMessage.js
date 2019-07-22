@@ -40,8 +40,6 @@ const validateAttachmentsActions = (attachmentActions) => {
 		webview_height_ratio: String,
 		msg: String,
 		msg_in_chat_window: Boolean,
-		open_room_by_id: Boolean,
-		rid: String,
 	}));
 };
 

@@ -8,7 +8,7 @@ let usernameBlackList = [];
 const toRegExp = (username) => new RegExp(`^${ s.escapeRegExp(username).trim() }$`, 'i');
 
 settings.get('Accounts_BlockedUsernameList', (key, value) => {
-	usernameBlackList = ['all', 'here'].concat(value.split(',')).map(toRegExp);
+	usernameBlackList = value.split(',').map(toRegExp);
 });
 
 const usernameIsBlocked = (username, usernameBlackList) => usernameBlackList.length

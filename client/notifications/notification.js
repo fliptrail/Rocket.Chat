@@ -82,11 +82,6 @@ Meteor.startup(function() {
 			Notifications.onUser('subscriptions-changed', (action, sub) => {
 				notifyNewRoom(sub);
 			});
-
-			Notifications.onUser('sa-notification', (notification) => {
-				Session.set('saNotification', true);
-				Session.set('saMessageReceiver', notification.payload.receiver);
-			});
 		}
 	});
 });

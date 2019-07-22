@@ -500,7 +500,6 @@ Meteor.startup(function() {
 				e2e.enabled.set(true);
 			} else {
 				e2e.enabled.set(false);
-				e2e.closeAlert();
 			}
 		}
 	});

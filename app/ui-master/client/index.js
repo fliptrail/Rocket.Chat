@@ -1,4 +1,4 @@
-import './loading';
+import './loading.html';
 import './error.html';
 import './logoLayout.html';
 import './main.html';

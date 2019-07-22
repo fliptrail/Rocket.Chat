@@ -151,7 +151,6 @@ export class CustomOAuth {
 		const params = {};
 		const headers = {
 			'User-Agent': this.userAgent, // http://doc.gitlab.com/ce/api/users.html#Current-user
-			Accept: 'application/json',
 		};
 
 		if (this.identityTokenSentVia === 'header') {

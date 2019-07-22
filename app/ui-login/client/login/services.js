@@ -64,7 +64,7 @@ Template.loginServices.helpers({
 
 const longinMethods = {
 	'meteor-developer': 'MeteorDeveloperAccount',
-	linkedin: 'Linkedin',
+	linkedin: 'LinkedIn',
 };
 
 Template.loginServices.events({

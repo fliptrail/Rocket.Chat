@@ -36,17 +36,6 @@ function directorySearch(config, cb) {
 					domain: result.federation && result.federation.peer,
 				};
 			}
-
-			if (config.type === 'serviceAccounts') {
-				return {
-					name: result.name,
-					username: result.username,
-					createdAt: timeAgo(result.createdAt, t),
-					description: result.description,
-					subscribers: result.subscribers || 0,
-					domain: result.federation && result.federation.peer,
-				};
-			}
 			return null;
 		}));
 	});
@@ -107,20 +96,13 @@ Template.directory.helpers({
 				return true;
 			},
 		};
-		const serviceAccountsTab = {
-			label: t('Service_accounts'),
-			value: 'serviceAccounts',
-			condition() {
-				return true;
-			},
-		};
 		if (searchType.get() === 'channels') {
 			channelsTab.active = true;
 		} else {
 			usersTab.active = true;
 		}
 		return {
-			tabs: [channelsTab, usersTab, serviceAccountsTab],
+			tabs: [channelsTab, usersTab],
 			onChange(value) {
 				results.set([]);
 				end.set(false);
@@ -148,9 +130,6 @@ Template.directory.helpers({
 			if (searchType.get() === 'channels') {
 				type = 'c';
 				routeConfig = { name: item.name };
-			} else if (searchType.get() === 'users') {
-				type = 'd';
-				routeConfig = { name: item.username };
 			} else {
 				type = 'd';
 				routeConfig = { name: item.username };

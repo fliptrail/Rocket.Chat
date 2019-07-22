@@ -35,7 +35,7 @@ class GoogleVision {
 				callbacks.remove('beforeSaveMessage', 'googlevision-blockunsafe');
 			}
 		});
-		callbacks.add('afterFileUpload', this.annotate.bind(this), callbacks.priority.MEDIUM, 'GoogleVision');
+		callbacks.add('afterFileUpload', this.annotate.bind(this));
 	}
 
 	incCallCount(count) {

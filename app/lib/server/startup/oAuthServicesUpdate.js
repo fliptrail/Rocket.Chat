@@ -78,13 +78,6 @@ function _OAuthServicesUpdate() {
 				data.consumerKey = data.clientId;
 				delete data.clientId;
 			}
-
-			if (serviceName === 'Linkedin') {
-				data.clientConfig = {
-					requestPermissions: ['r_liteprofile', 'r_emailaddress'],
-				};
-			}
-
 			ServiceConfiguration.configurations.upsert({
 				service: serviceName.toLowerCase(),
 			}, {

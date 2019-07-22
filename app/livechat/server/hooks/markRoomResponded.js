@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 
 import { callbacks } from '../../../callbacks';
 import { Rooms } from '../../../models';
@@ -18,11 +19,13 @@ callbacks.add('afterSaveMessage', function(message, room) {
 		return message;
 	}
 
-	Rooms.setResponseByRoomId(room._id, {
-		user: {
-			_id: message.u._id,
-			username: message.u.username,
-		},
+	Meteor.defer(() => {
+		Rooms.setResponseByRoomId(room._id, {
+			user: {
+				_id: message.u._id,
+				username: message.u.username,
+			},
+		});
 	});
 
 	return message;
