@@ -6,6 +6,7 @@ import { Users, Subscriptions, Messages, Rooms, Integrations, FederationPeers } 
 import { hasRole, getUsersInRole } from '../../../authorization';
 import { settings } from '../../../settings';
 import { Notifications } from '../../../notifications';
+import { callbacks } from '../../../callbacks';
 import { getConfig } from '../../../federation/server/config';
 
 export const deleteUser = function(userId) {
@@ -98,6 +99,7 @@ export const deleteUser = function(userId) {
 	}
 
 	Users.removeById(userId); // Remove user from users database
+	callbacks.run('afterDeleteUser', { _id: userId });
 
 	// Refresh the peers list
 	const { peer: { domain: localPeerDomain } } = getConfig();
