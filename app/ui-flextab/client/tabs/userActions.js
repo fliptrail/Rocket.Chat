@@ -124,6 +124,55 @@ export const getActions = ({ user, directActions, hideAdminControls }) => {
 			},
 		},
 
+		{
+			icon: 'articles',
+			name: t('Articles'),
+			action: prevent(getUser, ({ _id }) =>
+				Meteor.call('redirectToUsersArticles', _id, (error, result) => {
+					if (error) {
+						return handleError(error);
+					}
+					const redirectWindow = window.open(result.link, '_blank');
+					redirectWindow.location;
+				})
+			),
+			condition() {
+				return settings.get('Articles_Enabled');
+			},
+		},
+
+		function() {
+			if (isSelf(this.username) || !directActions) {
+				return;
+			}
+			hasAlreadyFollowed(this.username);
+
+			if (Session.get('hasFollowed')) {
+				return {
+					icon: 'plus',
+					name: t('Unfollow'),
+					action: prevent(getUser, ({ username }) =>
+						Meteor.call('unfollowUser', username, success(() => toastr.success(TAPi18n.__('You_have_unfollowed__username_', { username }))))
+					),
+					condition() {
+						return settings.get('Newsfeed_enabled');
+					},
+				};
+			}
+
+
+			return {
+				icon: 'plus',
+				name: t('Follow'),
+				action: prevent(getUser, ({ username }) =>
+					Meteor.call('followUser', username, success(() => toastr.success(TAPi18n.__('You_have_followed__username_', { username }))))
+				),
+				condition() {
+					return settings.get('Newsfeed_enabled');
+				},
+			};
+		},
+
 		function() {
 			if (isSelf(this.username) || !directActions) {
 				return;

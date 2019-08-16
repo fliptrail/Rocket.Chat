@@ -71,6 +71,7 @@ export const loadNewsfeedHistory = function loadNewsfeedHistory({ userId, end, l
 					ts: 1,
 				},
 			});
+
 			if (Object.keys(unreadMessages).length === 0 && unreadMessages.constructor === Object) {
 				firstUnread = {};
 				unreadNotLoaded = 0;
@@ -78,6 +79,7 @@ export const loadNewsfeedHistory = function loadNewsfeedHistory({ userId, end, l
 				firstUnread = unreadMessages.fetch()[0];
 				unreadNotLoaded = unreadMessages.count();
 			}
+
 		}
 	}
 

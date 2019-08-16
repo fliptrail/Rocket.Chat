@@ -45,7 +45,7 @@ const validateAttachmentsFields = (attachmentField) => {
 	check(attachmentField, objectMaybeIncluding({
 		short: Boolean,
 		title: String,
-		value: Match.OneOf(String, Match.Integer, Boolean),
+		value: Match.OneOf(String, Number, Boolean),
 	}));
 
 	if (typeof attachmentField.value !== 'undefined') {
@@ -63,6 +63,8 @@ const validateAttachmentsActions = (attachmentActions) => {
 		webview_height_ratio: String,
 		msg: String,
 		msg_in_chat_window: Boolean,
+		open_room_by_id: Boolean,
+		rid: String,
 	}));
 };
 
@@ -198,6 +200,10 @@ export const sendMessage = function(user, message, room, upsert = false) {
 			}, message);
 			message._id = _id;
 		} else {
+			const messageAlreadyExists = message._id && Messages.findOneById(message._id, { fields: { _id: 1 } });
+			if (messageAlreadyExists) {
+				return;
+			}
 			message._id = Messages.insert(message);
 
 			// if(settings.get('Newsfeed_enabled')){

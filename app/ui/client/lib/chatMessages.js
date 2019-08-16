@@ -138,18 +138,22 @@ export class ChatMessages {
 
 	toPrevMessage() {
 		const { element } = this.editing;
-		if (element) {
-			let previous;
-			for (previous = element.previousElementSibling; previous; previous = previous.previousElementSibling) {
-				if (previous.matches('.own:not(.system)')) {
-					break;
-				}
-			}
-
-			previous ? this.edit(previous, false) : this.clearEditing();
-		} else {
-			this.edit(this.wrapper.querySelector('.own:not(.system):last-child'), false);
+		if (!element) {
+			const messages = Array.from(this.wrapper.querySelectorAll('.own:not(.system)'));
+			const message = messages.pop();
+			return message && this.edit(message, false);
 		}
+
+		for (
+			let previous = element.previousElementSibling;
+			previous;
+			previous = previous.previousElementSibling
+		) {
+			if (previous.matches('.own:not(.system)')) {
+				return this.edit(previous, false);
+			}
+		}
+		this.clearEditing();
 	}
 
 	toNextMessage() {
@@ -249,8 +253,8 @@ export class ChatMessages {
 
 		messageBoxState.save({ rid, tmid }, this.input);
 
-		let msg = value;
-		if (value.trim()) {
+		let msg = value.trim();
+		if (msg) {
 			const mention = this.$input.data('mention-user') || false;
 			const replies = this.$input.data('reply') || [];
 			if (!mention || !threadsEnabled) {
@@ -260,8 +264,6 @@ export class ChatMessages {
 			if (mention && threadsEnabled && replies.length) {
 				tmid = replies[0]._id;
 			}
-		} else {
-			msg = '';
 		}
 
 		if (msg) {
@@ -280,7 +282,6 @@ export class ChatMessages {
 				await this.processMessageSend(message);
 				this.$input.removeData('reply').trigger('dataChange');
 			} catch (error) {
-				console.error(error);
 				handleError(error);
 			}
 			return done();
@@ -299,7 +300,6 @@ export class ChatMessages {
 				this.resetToDraft(this.editing.id);
 				this.confirmDeleteMsg(message, done);
 			} catch (error) {
-				console.error(error);
 				handleError(error);
 			}
 		}

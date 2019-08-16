@@ -33,6 +33,8 @@ export class Messages extends Base {
 		// threads
 		this.tryEnsureIndex({ tmid: 1 }, { sparse: true });
 		this.tryEnsureIndex({ tcount: 1, tlm: 1 }, { sparse: true });
+		// livechat
+		this.tryEnsureIndex({ 'navigation.token': 1 }, { sparse: true });
 	}
 
 	setReactions(messageId, reactions) {
@@ -282,6 +284,7 @@ export class Messages extends Base {
 			],
 		};
 
+
 		if (Match.test(types, [String]) && (types.length > 0)) {
 			query.t =			{ $nin: types };
 		}
@@ -453,6 +456,7 @@ export class Messages extends Base {
 		if (Match.test(types, [String]) && (types.length > 0)) {
 			query.t =			{ $nin: types };
 		}
+
 		const msgIndex = this.summarization(query);
 
 		query = {
@@ -464,6 +468,7 @@ export class Messages extends Base {
 		if (Match.test(types, [String]) && (types.length > 0)) {
 			query.t =			{ $nin: types };
 		}
+
 
 		return this.find(query, options);
 	}
@@ -515,6 +520,7 @@ export class Messages extends Base {
 
 		const listOfAccessibleRoomsObject = listOfAccessibleRooms.map((rid) => ({ rid }));
 
+
 		if (!following || !following.length || !listOfAccessibleRoomsObject || !listOfAccessibleRoomsObject.length) {
 			return {};
 		}
@@ -535,6 +541,7 @@ export class Messages extends Base {
 		if (Match.test(types, [String]) && (types.length > 0)) {
 			query.t =			{ $nin: types };
 		}
+
 		const msgIndex = this.summarization(query);
 
 		if (!msgIndex || !msgIndex.length) {
